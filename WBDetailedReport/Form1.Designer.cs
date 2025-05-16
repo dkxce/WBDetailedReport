@@ -56,6 +56,10 @@
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.button1 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tInfo = new System.Windows.Forms.TextBox();
+            this.bLoad = new System.Windows.Forms.Button();
+            this.fMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxEdit)).BeginInit();
@@ -64,12 +68,14 @@
             this.tabPage2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -79,6 +85,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.bLoad);
             this.tabPage1.Controls.Add(this.maxEdit);
             this.tabPage1.Controls.Add(this.maxTT);
             this.tabPage1.Controls.Add(this.stopBtn);
@@ -224,7 +231,8 @@
             this.tokenEdit.Location = new System.Drawing.Point(112, 16);
             this.tokenEdit.Name = "tokenEdit";
             this.tokenEdit.PasswordChar = '*';
-            this.tokenEdit.Size = new System.Drawing.Size(469, 22);
+            this.tokenEdit.ReadOnly = true;
+            this.tokenEdit.Size = new System.Drawing.Size(375, 22);
             this.tokenEdit.TabIndex = 5;
             this.tokenEdit.Enter += new System.EventHandler(this.tokenEdit_Enter);
             this.tokenEdit.Leave += new System.EventHandler(this.tokenEdit_Leave);
@@ -362,6 +370,44 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.tInfo);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(959, 490);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Информация о токене";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tInfo
+            // 
+            this.tInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tInfo.Font = new System.Drawing.Font("Monoid", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.tInfo.Location = new System.Drawing.Point(3, 3);
+            this.tInfo.Multiline = true;
+            this.tInfo.Name = "tInfo";
+            this.tInfo.ReadOnly = true;
+            this.tInfo.Size = new System.Drawing.Size(953, 484);
+            this.tInfo.TabIndex = 0;
+            // 
+            // bLoad
+            // 
+            this.bLoad.Location = new System.Drawing.Point(493, 16);
+            this.bLoad.Name = "bLoad";
+            this.bLoad.Size = new System.Drawing.Size(88, 23);
+            this.bLoad.TabIndex = 15;
+            this.bLoad.Text = "Выбрать ...";
+            this.bLoad.UseVisualStyleBackColor = true;
+            this.bLoad.Click += new System.EventHandler(this.bLoad_Click);
+            // 
+            // fMenu
+            // 
+            this.fMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.fMenu.Name = "fMenu";
+            this.fMenu.Size = new System.Drawing.Size(61, 4);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -382,6 +428,8 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -415,6 +463,10 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusText;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox tInfo;
+        private System.Windows.Forms.Button bLoad;
+        private System.Windows.Forms.ContextMenuStrip fMenu;
     }
 }
 

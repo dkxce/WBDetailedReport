@@ -19,6 +19,7 @@ using System.Net;
 using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace WBDetailedReport
 {
@@ -27,6 +28,7 @@ namespace WBDetailedReport
         private DateTime currRun = DateTime.MinValue;
         private DateTime nextRun = DateTime.MinValue;
         private string taskPath = string.Empty;
+        private string user = "0";
 
         public Form1()
         {
@@ -57,12 +59,30 @@ namespace WBDetailedReport
                     if (!ex)
                      fileBox.Items.Add(new FileName(file));
                 };
+                if(ext == ".txt")
+                {
+                    LoadToken(file);
+                    return;
+                };
             };
             if (fileBox.Items.Count > 0)
             {
                 fileBox.Sorted = true;
             };
             statusText.Text = "";
+        }
+
+        private void LoadToken(string file)
+        {
+            try
+            {
+                string key = File.ReadAllText(file);
+                if (string.IsNullOrEmpty(key)) return;
+                if (!key.StartsWith("ey")) return;
+                tokenEdit.Text = key;
+                UpdateHeader();
+            }
+            catch { };
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -121,6 +141,49 @@ namespace WBDetailedReport
         {
             // generateCipher();
             try { tokenEdit.Text = File.ReadAllText(Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), "WBToken.txt")); } catch { };
+            UpdateHeader();
+        }
+
+        private void UpdateHeader()
+        {
+            if (!tokenEdit.Text.StartsWith("ey"))
+            {
+                Text = $"WBDetailerReport";
+                tInfo.Clear();
+                return;
+            };
+            try
+            {
+                string payload = tokenEdit.Text.Split('.')[1];
+                while (payload.Length % 4 != 0) payload += "=";
+                byte[] data = Convert.FromBase64String(payload);
+                string decodedString = System.Text.Encoding.UTF8.GetString(data);
+                JObject jobj = JsonConvert.DeserializeObject<JObject>(decodedString);
+                user = jobj["uid"].ToString();
+                Text = $"WBDetailerReport: {user}";
+
+                tInfo.Clear();
+                tInfo.Text += $"id : {jobj["id"]?.ToString()} \r\n";
+                tInfo.Text += $"iid: {jobj["iid"]?.ToString()} \r\n";
+                tInfo.Text += $"oid: {jobj["oid"]?.ToString()} \r\n";
+                tInfo.Text += $"s  : {jobj["s"]?.ToString()} \r\n";
+                tInfo.Text += $"sid: {jobj["sid"]?.ToString()} \r\n";
+                tInfo.Text += $"t  : {jobj["t"]?.ToString()} \r\n";
+                tInfo.Text += $"uid: {jobj["uid"]?.ToString()} \r\n";
+                string exp = UnixTimeStampToDateTime(double.Parse(jobj["exp"]?.ToString())).ToString("HH:mm:ss dd.MM.yyyy");
+                tInfo.Text += $"exp: {exp} ({jobj["exp"]?.ToString()}) \r\n";
+
+                Text += $" - (токен истекает {exp})";
+            }
+            catch { };
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dateTime;
         }
 
         private void tokenEdit_Leave(object sender, EventArgs e)
@@ -150,7 +213,7 @@ namespace WBDetailedReport
 
         private void prepareDir()
         {
-            taskPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "T_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
+            taskPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "T_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + $"_{user}");
             Directory.CreateDirectory(taskPath);
         }
 
@@ -372,6 +435,18 @@ namespace WBDetailedReport
             // if(ttlRecs > 0) fileBox.Items.Clear();
             MessageBox.Show(msg, "Обработка завершена", MessageBoxButtons.OK, MessageBoxIcon.Information);            
         }
+
+        private void bLoad_Click(object sender, EventArgs e)
+        {
+            string[] files = Directory.GetFiles(Path.GetDirectoryName(Application.ExecutablePath), "*.txt");
+            if (files == null || files.Length == 0) return;
+
+            fMenu.Items.Clear();
+            foreach(string f in files)
+                fMenu.Items.Add(Path.GetFileNameWithoutExtension(f)).Click += (ss, ee) => LoadToken(f);
+            fMenu.Show(tabPage1.PointToScreen(new Point(bLoad.Location.X, bLoad.Location.Y + bLoad.Height)));
+        }
+
     }
 
     public class FileName
